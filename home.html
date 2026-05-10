@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tournament Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl text-white text-center">
+            <h2 class="text-4xl font-bold mb-4">Total Registered Users</h2>
+            <div id="userCount" class="text-6xl font-extrabold text-blue-500 mb-6">...</div>
+            <button id="logoutBtn" class="bg-red-600 px-8 py-3 rounded-xl font-bold">Logout</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { /* একই কনফিগারেশন */ 
+            apiKey: "AIzaSyAXIjn1NkBQXi_WFWTqCEyG74Q2FV9SAe8",
+            authDomain: "singup-cd8a8.firebaseapp.com",
+            projectId: "singup-cd8a8",
+            storageBucket: "singup-cd8a8.firebasestorage.app",
+            messagingSenderId: "744323487147",
+            appId: "1:744323487147:web:a8aec9bce5d2efe9ed2eee"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ইউজার সংখ্যা গণনা
+        const coll = collection(db, "users");
+        getCountFromServer(coll).then(snapshot => {
+            document.getElementById('userCount').innerText = snapshot.data().count;
+        });
+
+        document.getElementById('logoutBtn').onclick = () => {
+            signOut(getAuth()).then(() => window.location.href = "index.html");
+        };
+    </script>
+</body>
+</html>
