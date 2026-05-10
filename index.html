@@ -4,21 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tournament Login</title>
+    <!-- Tailwind CSS for Premium Design -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f172a; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
 </head>
-<body class="bg-slate-900 flex items-center justify-center min-h-screen">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-sm text-center">
-        <h2 class="text-2xl font-bold mb-6">Login to Tournament</h2>
-        <button id="googleBtn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">
-            Login with Google
+    <div class="glass w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center text-white">
+        <h2 class="text-3xl font-bold mb-2">Login</h2>
+        <p class="text-gray-400 mb-8">Access your dashboard</p>
+        
+        <button id="googleBtn" class="w-full bg-white text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-100 transition duration-300 flex items-center justify-center gap-2">
+            <span>Sign in with Google</span>
         </button>
+        
+        <div id="errorBox" class="mt-4 text-red-400 text-sm"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // আপনার Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAXIjn1NkBQXi_WFWTqCEyG74Q2FV9SAe8",
             authDomain: "singup-cd8a8.firebaseapp.com",
@@ -32,21 +42,22 @@
         const auth = getAuth();
         const provider = new GoogleAuthProvider();
 
-        // বাটন ক্লিক করলে পপ-আপ নয়, পেজ রিডাইরেক্ট হবে
-        document.getElementById('googleBtn').addEventListener('click', () => {
-            signInWithRedirect(auth, provider);
-        });
+        const btn = document.getElementById('googleBtn');
+        const errorBox = document.getElementById('errorBox');
 
-        // পেজে ফিরে আসার পর লগইন চেক করবে
-        getRedirectResult(auth)
-            .then((result) => {
-                if (result) {
+        btn.addEventListener('click', () => {
+            btn.innerText = "Processing...";
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // লগইন সফল হলে home.html এ নিয়ে যাবে
                     window.location.href = "home.html";
-                }
-            })
-            .catch((error) => {
-                alert("Error: " + error.message);
-            });
+                })
+                .catch((error) => {
+                    btn.innerText = "Sign in with Google";
+                    errorBox.innerText = "Error: " + error.message;
+                    console.error(error);
+                });
+        });
     </script>
 </body>
 </html>
