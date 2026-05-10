@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-sm text-center">
+        <h2 class="text-2xl font-bold mb-6">Login to Tournament</h2>
+        <button id="googleBtn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">
+            Login with Google
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXIjn1NkBQXi_WFWTqCEyG74Q2FV9SAe8",
+            authDomain: "singup-cd8a8.firebaseapp.com",
+            projectId: "singup-cd8a8",
+            storageBucket: "singup-cd8a8.firebasestorage.app",
+            messagingSenderId: "744323487147",
+            appId: "1:744323487147:web:a8aec9bce5d2efe9ed2eee"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+
+        // বাটন ক্লিক করলে পপ-আপ নয়, পেজ রিডাইরেক্ট হবে
+        document.getElementById('googleBtn').addEventListener('click', () => {
+            signInWithRedirect(auth, provider);
+        });
+
+        // পেজে ফিরে আসার পর লগইন চেক করবে
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result) {
+                    window.location.href = "home.html";
+                }
+            })
+            .catch((error) => {
+                alert("Error: " + error.message);
+            });
+    </script>
+</body>
+</html>
