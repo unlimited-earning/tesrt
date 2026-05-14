@@ -2,43 +2,242 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tournament Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Gaming Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #00f2fe; --secondary: #4facfe; --bg: #0a0a0c; --glass: rgba(255, 255, 255, 0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: white; padding-bottom: 50px; }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 15px;
+            position: relative;
+            border: 2px solid var(--primary);
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            opacity: 0; transition: opacity 1s ease-in-out;
+            background-size: cover; background-position: center;
+        }
+
+        .slide.active { opacity: 1; }
+
+        .welcome-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome-box h1 { font-size: 24px; font-weight: 800; }
+        .welcome-box span { color: var(--primary); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+            max-width: 900px; margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tournament-card {
+            max-width: 900px;
+            margin: 20px auto;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.5));
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--primary);
+        }
+
+        .prize-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .prize-item span:first-child { color: #aaa; }
+        .prize-item span:last-child { color: var(--primary); font-weight: 600; }
+
+        .btn-tg {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            margin: 10px auto;
+            max-width: 900px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-update { background: #0088cc; color: white; }
+        .btn-group { background: #222; border: 1px solid #0088cc; color: #0088cc; }
+
+        .timer {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+
+        .logout-btn { color: #ff4444; cursor: pointer; font-weight: 600; }
+    </style>
 </head>
-<body class="bg-slate-950 p-8">
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl text-white text-center">
-            <h2 class="text-4xl font-bold mb-4">Total Registered Users</h2>
-            <div id="userCount" class="text-6xl font-extrabold text-blue-500 mb-6">...</div>
-            <button id="logoutBtn" class="bg-red-600 px-8 py-3 rounded-xl font-bold">Logout</button>
-        </div>
+<body>
+
+<header>
+    <div style="font-weight: 800; font-size: 1.2rem;">GAMING <span style="color:var(--primary)">PRO</span></div>
+    <div class="logout-btn" onclick="logout()">LOGOUT</div>
+</header>
+
+<div class="slider-container" id="topSlider">
+    <!-- Slides load here -->
+</div>
+
+<div class="welcome-box">
+    <h1>Welcome, <span id="userName">Player</span>!</h1>
+    <p style="color: #888;">Prepare for the ultimate battle</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3 id="totalPlayers">0</h3>
+        <p>Registered Players</p>
     </div>
+    <div class="stat-card">
+        <h3>15</h3>
+        <p>Total Slots</p>
+    </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div class="tournament-card">
+    <h2 style="text-align: center; margin-bottom: 20px;">COMING SOON TOURNAMENT</h2>
+    <div class="timer" id="countdown">00:00:00</div>
+    
+    <div class="prize-item"><span>Entry Price</span><span>FREE</span></div>
+    <div class="prize-item"><span>Total Win Prize</span><span>5000 BDT</span></div>
+    <div class="prize-item"><span>Total Booyah Prize</span><span>1000 BDT</span></div>
+    <div class="prize-item"><span>1st Place Team</span><span>2000 BDT</span></div>
+    <div class="prize-item"><span>2nd Place Team</span><span>1000 BDT</span></div>
+    <div class="prize-item"><span>3rd Place Team</span><span>500 BDT</span></div>
+    <div class="prize-item"><span>MOTM (1st/2nd/3rd)</span><span>200/150/100 BDT</span></div>
+</div>
 
-        const firebaseConfig = { /* একই কনফিগারেশন */ 
-            apiKey: "AIzaSyAXIjn1NkBQXi_WFWTqCEyG74Q2FV9SAe8",
-            authDomain: "singup-cd8a8.firebaseapp.com",
-            projectId: "singup-cd8a8",
-            storageBucket: "singup-cd8a8.firebasestorage.app",
-            messagingSenderId: "744323487147",
-            appId: "1:744323487147:web:a8aec9bce5d2efe9ed2eee"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+<a href="#" class="btn-tg btn-update"><i class="fab fa-telegram"></i> JOIN UPDATE CHANNEL</a>
+<a href="#" class="btn-tg btn-group"><i class="fab fa-telegram"></i> JOIN TELEGRAM GROUP</a>
 
-        // ইউজার সংখ্যা গণনা
-        const coll = collection(db, "users");
-        getCountFromServer(coll).then(snapshot => {
-            document.getElementById('userCount').innerText = snapshot.data().count;
+<div class="slider-container" id="bottomSlider" style="margin-top: 40px;">
+    <!-- Slides load here -->
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+      // Paste Your Config Here
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    auth.onAuthStateChanged(user => {
+        if (!user) window.location.href = "index.html";
+        else loadUserData(user.uid);
+    });
+
+    function logout() {
+        auth.signOut().then(() => window.location.href = "index.html");
+    }
+
+    function loadUserData(uid) {
+        db.ref('users/' + uid).once('value', snap => {
+            const data = snap.val();
+            if(data) document.getElementById('userName').innerText = data.name.split(' ')[0];
         });
 
-        document.getElementById('logoutBtn').onclick = () => {
-            signOut(getAuth()).then(() => window.location.href = "index.html");
-        };
-    </script>
+        // Count Players
+        db.ref('users').on('value', snap => {
+            document.getElementById('totalPlayers').innerText = snap.numChildren();
+        });
+
+        // Load Sliders
+        db.ref('banners').on('value', snap => {
+            const banners = snap.val();
+            const topS = document.getElementById('topSlider');
+            const botS = document.getElementById('bottomSlider');
+            topS.innerHTML = ''; botS.innerHTML = '';
+
+            if(banners) {
+                Object.values(banners).forEach((url, index) => {
+                    const active = index === 0 ? 'active' : '';
+                    topS.innerHTML += `<div class="slide ${active}" style="background-image:url('${url}')"></div>`;
+                    botS.innerHTML += `<div class="slide ${active}" style="background-image:url('${url}')"></div>`;
+                });
+                startSlider();
+            }
+        });
+    }
+
+    let sliderInterval = 5000;
+    db.ref('settings/sliderTime').on('value', snap => {
+        if(snap.val()) sliderInterval = snap.val() * 1000;
+    });
+
+    function startSlider() {
+        const containers = ['.slider-container'];
+        containers.forEach(selector => {
+            const slides = document.querySelectorAll(`${selector} .slide`);
+            if(slides.length < 2) return;
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, sliderInterval);
+        });
+    }
+
+    // Countdown Timer Placeholder
+    let time = 36000; 
+    setInterval(() => {
+        time--;
+        let h = Math.floor(time / 3600);
+        let m = Math.floor((time % 3600) / 60);
+        let s = time % 60;
+        document.getElementById('countdown').innerText = 
+            `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }, 1000);
+</script>
 </body>
 </html>
