@@ -9,72 +9,55 @@
     <style>
         :root { --primary: #00f2fe; --bg: #0a0a0c; --card: rgba(255,255,255,0.05); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: white; padding-bottom: 80px; }
-        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--primary); }
-        .slider-box { width: 95%; max-width: 800px; aspect-ratio: 16/9; margin: 20px auto; border-radius: 15px; overflow: hidden; position: relative; border: 2px solid var(--primary); }
-        .slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: 0.8s; background-size: cover; background-position: center; }
-        .slide.active { opacity: 1; }
-        .content { padding: 0 20px; max-width: 800px; margin: 0 auto; }
-        .welcome { text-align: center; margin: 20px 0; }
-        .welcome h2 { font-size: 20px; }
-        .welcome span { color: var(--primary); }
-        .tournament-card { background: var(--card); border-radius: 20px; padding: 25px; border: 1px solid rgba(0,242,254,0.2); position: relative; overflow: hidden; }
-        .tournament-card::before { content: 'LIVE'; position: absolute; top: 10px; right: -30px; background: red; padding: 5px 40px; transform: rotate(45deg); font-size: 10px; font-weight: bold; }
-        .prize-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .prize-row span:last-child { color: var(--primary); font-weight: bold; }
-        .tg-btn { display: block; text-align: center; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 15px; transition: 0.3s; }
-        .tg-update { background: #0088cc; color: white; }
-        .tg-group { border: 1px solid #0088cc; color: #0088cc; }
-        .timer { font-size: 30px; font-weight: 800; text-align: center; color: var(--primary); margin: 20px 0; letter-spacing: 3px; }
-        .logout { color: #ff4444; font-weight: bold; cursor: pointer; }
+        body { background: var(--bg); color: white; padding-bottom: 50px; }
+        header { padding: 15px 20px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--primary); position: sticky; top:0; z-index:100;}
+        .slider { width: 95%; max-width: 800px; aspect-ratio: 16/9; margin: 20px auto; border-radius: 15px; overflow: hidden; position: relative; border: 1px solid var(--primary); }
+        .slide { position: absolute; width:100%; height:100%; opacity:0; transition:0.8s; background-size:cover; background-position:center; }
+        .slide.active { opacity:1; }
+        .card { background: var(--card); margin: 20px auto; width: 90%; max-width: 800px; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+        .prize { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; }
+        .btn-tg { display: block; text-align: center; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: bold; margin: 10px auto; width: 90%; max-width: 800px; }
+        .logout { color: red; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
     <header>
-        <div style="font-weight: 800; color: var(--primary);">GAMING PRO</div>
-        <div class="logout" onclick="logout()">LOGOUT</div>
+        <div style="color: var(--primary); font-weight: 800;">GAMING PRO</div>
+        <div class="logout" onclick="auth.signOut()">LOGOUT</div>
     </header>
 
-    <div class="slider-box" id="topSlider"></div>
+    <div class="slider" id="topS"></div>
 
-    <div class="content">
-        <div class="welcome">
-            <h2>Welcome, <span id="uName">Player</span></h2>
-            <p style="font-size: 13px; color: #888;">Total Players: <span id="pCount">0</span></p>
-        </div>
-
-        <h1 style="text-align: center; margin-bottom: 15px; font-size: 22px;">COMING SOON TOURNAMENT</h1>
-        
-        <div class="tournament-card">
-            <div class="timer" id="timer">00:00:00</div>
-            <div class="prize-row"><span>Entry Fee</span><span>FREE</span></div>
-            <div class="prize-row"><span>Win Prize</span><span>1000 BDT</span></div>
-            <div class="prize-row"><span>Booyah Prize</span><span>500 BDT</span></div>
-            <div class="prize-row"><span>1st Team</span><span>2000 BDT</span></div>
-            <div class="prize-row"><span>2nd Team</span><span>1200 BDT</span></div>
-            <div class="prize-row"><span>3rd Team</span><span>800 BDT</span></div>
-            <div class="prize-row"><span>Slots Left</span><span>15 Players</span></div>
-        </div>
-
-        <a href="#" class="tg-btn tg-update"><i class="fab fa-telegram"></i> TELEGRAM CHANNEL</a>
-        <a href="#" class="tg-btn tg-group"><i class="fab fa-telegram"></i> TELEGRAM GROUP</a>
-
-        <div class="slider-box" id="bottomSlider" style="margin-top: 30px;"></div>
+    <div class="card" style="text-align: center;">
+        <h2>Welcome, <span id="uName" style="color: var(--primary);">Player</span></h2>
+        <p>Total Players Registered: <span id="pCount">0</span></p>
     </div>
+
+    <div class="card">
+        <h3 style="text-align: center; margin-bottom: 15px;">TOURNAMENT DETAILS</h3>
+        <div class="prize"><span>Entry Fee</span><span>FREE</span></div>
+        <div class="prize"><span>Win Prize</span><span>1500 BDT</span></div>
+        <div class="prize"><span>1st Place</span><span>800 BDT</span></div>
+        <div class="prize"><span>2nd Place</span><span>500 BDT</span></div>
+        <div class="prize"><span>3rd Place</span><span>200 BDT</span></div>
+    </div>
+
+    <a href="#" class="btn-tg" style="background: #0088cc; color: white;">TELEGRAM CHANNEL</a>
+
+    <div class="slider" id="botS"></div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyCy1tgEVoowhxmmAczU0HKHFPei0tH91MY",
-            authDomain: "uguj-f4b63.firebaseapp.com",
-            projectId: "uguj-f4b63",
-            storageBucket: "uguj-f4b63.firebasestorage.app",
-            messagingSenderId: "843607188433",
-            appId: "1:843607188433:web:63a6584e52460e4e1876f0",
-            databaseURL: "https://uguj-f4b63-default-rtdb.firebaseio.com"
+            apiKey: "AIzaSyDbgxbAgvPBuykZzYmgcXLLln8iD6SV0G4",
+            authDomain: "torunament-b06fc.firebaseapp.com",
+            databaseURL: "https://torunament-b06fc-default-rtdb.firebaseio.com",
+            projectId: "torunament-b06fc",
+            storageBucket: "torunament-b06fc.firebasestorage.app",
+            messagingSenderId: "659612602947",
+            appId: "1:659612602947:web:6cc3e3a57d2fd798f37af6"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.database();
@@ -87,15 +70,10 @@
             }
         });
 
-        function logout() { auth.signOut(); }
-
-        // Slider Logic
-        let interval = 5000;
-        db.ref('settings/sliderTime').on('value', s => { if(s.val()) interval = s.val() * 1000; });
-
+        // Banner System
         db.ref('banners').on('value', s => {
             const data = s.val();
-            const top = document.getElementById('topSlider'), bot = document.getElementById('bottomSlider');
+            const top = document.getElementById('topS'), bot = document.getElementById('botS');
             top.innerHTML = ''; bot.innerHTML = '';
             if(data) {
                 Object.values(data).forEach((url, i) => {
@@ -103,13 +81,13 @@
                     top.innerHTML += `<div class="slide ${active}" style="background-image:url('${url}')"></div>`;
                     bot.innerHTML += `<div class="slide ${active}" style="background-image:url('${url}')"></div>`;
                 });
-                startAutoSlider();
+                startSlider();
             }
         });
 
-        function startAutoSlider() {
+        function startSlider() {
             setInterval(() => {
-                const sliders = document.querySelectorAll('.slider-box');
+                const sliders = document.querySelectorAll('.slider');
                 sliders.forEach(s => {
                     const slides = s.querySelectorAll('.slide');
                     if(slides.length < 2) return;
@@ -117,16 +95,8 @@
                     slides[curr].classList.remove('active');
                     slides[(curr + 1) % slides.length].classList.add('active');
                 });
-            }, interval);
+            }, 5000);
         }
-
-        // Countdown
-        let t = 86400;
-        setInterval(() => {
-            t--;
-            let h = Math.floor(t/3600), m = Math.floor((t%3600)/60), sc = t%60;
-            document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sc.toString().padStart(2,'0')}`;
-        }, 1000);
     </script>
 </body>
 </html>
