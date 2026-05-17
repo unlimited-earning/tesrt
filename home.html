@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE TOURNAMENT | Dashboard</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
+    <style>
+        :root { --accent: #6c5ce7; --bg: #050505; --card: #121212; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        /* Banner Container - Fixed 16:9 */
+        .banner-box { width: 100%; max-width: 600px; background: #000; overflow: hidden; }
+        .banner-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+        
+        /* Stats Dashboard */
+        .dashboard { width: 90%; max-width: 500px; background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid #222; text-align: center; margin: 20px 0; }
+        .count-text { font-family: 'Orbitron'; font-size: 3rem; color: var(--accent); margin: 5px 0; }
+        
+        /* Buttons */
+        .action-btns { width: 90%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
+        .btn { padding: 16px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; transition: 0.3s; }
+        .btn-apply { background: var(--accent); color: white; }
+        .btn-notice { background: #222; color: white; border: 1px solid #444; }
+        .btn-tg { background: #0088cc; color: white; }
+        .btn:hover { transform: scale(1.02); filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <!-- Top Banner -->
+    <div class="banner-box">
+        <img id="topBanner" class="banner-img" src="https://i.ibb.co/6883g8D/tournament-banner.jpg" alt="Tournament Banner">
+    </div>
+
+    <!-- Stats -->
+    <div class="dashboard">
+        <div style="font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px;">Registered Players</div>
+        <div class="count-text" id="applyCount">000</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-btns">
+        <a href="apply.html" class="btn btn-apply"><i class="fas fa-sword"></i> APPLY NOW</a>
+        <a href="notice.html" class="btn btn-notice"><i class="fas fa-bell"></i> NOTICE BOARD</a>
+        <a href="https://t.me/+HrEHLM9TOnowMDll" target="_blank" class="btn btn-tg"><i class="fab fa-telegram"></i> JOIN TELEGRAM</a>
+    </div>
+
+    <!-- Bottom Banner -->
+    <div class="banner-box" style="margin-top:20px;">
+        <img id="bottomBanner" class="banner-img" src="https://i.ibb.co/6883g8D/tournament-banner.jpg" alt="Tournament Banner">
+    </div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyB42lGhv-0M_kSIamswTodvRZSrrwgDXNA", databaseURL: "https://ssbl-fc912-default-rtdb.firebaseio.com", projectId: "ssbl-fc912" };
+        firebase.initializeApp(firebaseConfig);
+
+        // Fetch Count
+        firebase.database().ref('applications').on('value', snap => {
+            document.getElementById('applyCount').innerText = snap.numChildren().toString().padStart(3, '0');
+        });
+
+        // Fetch Banners
+        firebase.database().ref('banners').on('value', snap => {
+            const data = snap.val();
+            if(data) {
+                // ইমেজ লোড না হলে এরর হ্যান্ডলিং
+                if(data.topUrl) document.getElementById('topBanner').src = data.topUrl;
+                if(data.bottomUrl) document.getElementById('bottomBanner').src = data.bottomUrl;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE TOURNAMENT | Login & Register</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --accent: #6c5ce7; --bg: #0f0f12; --card: #18181d; }
+        body { margin: 0; font-family: 'Outfit', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; }
+        .main-card { background: var(--card); padding: 40px; border-radius: 24px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); }
+        h2 { text-align: center; margin-bottom: 30px; }
+        .field-wrap { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; margin-bottom: 8px; color: #888; text-transform: uppercase; }
+        .input-group { position: relative; height: 50px; }
+        input { width: 100%; height: 100%; padding: 0 16px; background: #0f0f12; border: 1px solid #333; border-radius: 12px; color: #fff; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); }
+        .eye-btn { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; }
+        .submit-btn { width: 100%; padding: 16px; background: var(--accent); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .switch-link { text-align: center; margin-top: 20px; font-size: 14px; color: #888; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <h2 id="formTitle">Login</h2>
+    
+    <div class="field-wrap" id="nameGroup" style="display:none;">
+        <label>Full Name</label>
+        <div class="input-group"><input type="text" id="name" placeholder="John Doe"></div>
+    </div>
+
+    <div class="field-wrap">
+        <label>Email Address</label>
+        <div class="input-group"><input type="email" id="email" placeholder="example@mail.com"></div>
+    </div>
+
+    <div class="field-wrap">
+        <label>Password</label>
+        <div class="input-group">
+            <input type="password" id="pass" placeholder="••••••••">
+            <i class="fa fa-eye eye-btn" id="eyeIcon" onclick="togglePass('pass', 'eyeIcon')"></i>
+        </div>
+    </div>
+
+    <div class="field-wrap" id="cPassGroup" style="display:none;">
+        <label>Confirm Password</label>
+        <div class="input-group">
+            <input type="password" id="cpass" placeholder="••••••••">
+            <i class="fa fa-eye eye-btn" id="cEyeIcon" onclick="togglePass('cpass', 'cEyeIcon')"></i>
+        </div>
+    </div>
+
+    <button class="submit-btn" id="mainBtn" onclick="authAction()">Login Account</button>
+    <p class="switch-link" onclick="toggleMode()"> <span id="switchText">Create new account?</span></p>
+</div>
+
+<script>
+    // Firebase Setup
+    const firebaseConfig = {
+        apiKey: "AIzaSyB42lGhv-0M_kSIamswTodvRZSrrwgDXNA",
+        authDomain: "ssbl-fc912.firebaseapp.com",
+        databaseURL: "https://ssbl-fc912-default-rtdb.firebaseio.com",
+        projectId: "ssbl-fc912",
+        storageBucket: "ssbl-fc912.firebasestorage.app",
+        messagingSenderId: "489712128566",
+        appId: "1:489712128566:web:eb66db8e23ad8519187e97"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    let isLogin = true;
+
+    function togglePass(inputId, iconId) {
+        let p = document.getElementById(inputId);
+        let icon = document.getElementById(iconId);
+        p.type = (p.type === 'password') ? 'text' : 'password';
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    function toggleMode() {
+        isLogin = !isLogin;
+        document.getElementById('formTitle').innerText = isLogin ? 'Login' : 'Register';
+        document.getElementById('mainBtn').innerText = isLogin ? 'Login Account' : 'Register Now';
+        document.getElementById('switchText').innerText = isLogin ? 'Create new account?' : 'Already have an account? Login';
+        document.getElementById('nameGroup').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('cPassGroup').style.display = isLogin ? 'none' : 'block';
+    }
+
+    async function authAction() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
+        const name = document.getElementById('name').value;
+
+        if (isLogin) {
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(() => { window.location.href = 'home.html'; })
+                .catch(err => alert(err.message));
+        } else {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    firebase.database().ref('users/' + userCredential.user.uid).set({
+                        name: name,
+                        email: email
+                    }).then(() => { window.location.href = 'home.html'; });
+                })
+                .catch(err => alert(err.message));
+        }
+    }
+</script>
+</body>
+</html>
